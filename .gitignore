@@ -1,0 +1,23 @@
+# Build output
+build/
+DerivedData/
+
+# Xcode user data
+*.xcuserdata/
+xcuserdata/
+*.xcworkspace/xcuserdata/
+*.xccheckout
+*.xcscmblueprint
+*.moved-aside
+*.orig
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Temporary files
+*.swp
+*.swo
+*~

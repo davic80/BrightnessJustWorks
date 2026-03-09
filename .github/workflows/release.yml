@@ -1,0 +1,58 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    name: Build and release
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        # macos-latest ships multiple Xcode versions; pick the newest stable one
+        run: sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Build (Release)
+        run: |
+          xcodebuild \
+            -project BrightCursor.xcodeproj \
+            -scheme BrightnessJustWorks \
+            -configuration Release \
+            -destination "platform=macOS" \
+            CODE_SIGNING_ALLOWED=NO \
+            SYMROOT=$RUNNER_TEMP/BJWBuild
+
+      - name: Zip app bundle
+        run: |
+          cd $RUNNER_TEMP/BJWBuild/Release
+          zip -r --symlinks \
+            BrightnessJustWorks-${{ github.ref_name }}.zip \
+            BrightnessJustWorks.app
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: BrightnessJustWorks ${{ github.ref_name }}
+          body: |
+            ## Install
+
+            1. Download `BrightnessJustWorks-${{ github.ref_name }}.zip` below.
+            2. Unzip and move `BrightnessJustWorks.app` to `~/Applications/`.
+            3. Open it — macOS will ask for Accessibility access.
+            4. Grant it in **System Settings → Privacy & Security → Accessibility**.
+
+            > **Apple Silicon only** (M1/M2/M3/M4), macOS 12+.
+            > Because this app uses private APIs it is not signed or notarized.
+            > On first open: right-click → Open → Open to bypass Gatekeeper.
+
+            See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for what changed.
+          files: |
+            ${{ runner.temp }}/BJWBuild/Release/BrightnessJustWorks-${{ github.ref_name }}.zip
+          draft: false
+          prerelease: false

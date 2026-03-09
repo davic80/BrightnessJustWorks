@@ -1,0 +1,394 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C6CB78E5DECE40B9A0A57F01 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CB78E5DECE40B9A0A50001 /* main.swift */; };
+		C6CB78E5DECE40B9A0A57F02 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CB78E5DECE40B9A0A50002 /* AppDelegate.swift */; };
+		C6CB78E5DECE40B9A0A57F03 /* BrightnessKeyInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CB78E5DECE40B9A0A50003 /* BrightnessKeyInterceptor.swift */; };
+		C6CB78E5DECE40B9A0A57F04 /* DisplayRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CB78E5DECE40B9A0A50004 /* DisplayRouter.swift */; };
+		C6CB78E5DECE40B9A0A57F05 /* InternalBrightnessController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CB78E5DECE40B9A0A50005 /* InternalBrightnessController.swift */; };
+		C6CB78E5DECE40B9A0A57F06 /* ExternalBrightnessController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CB78E5DECE40B9A0A50006 /* ExternalBrightnessController.swift */; };
+		C6CB78E5DECE40B9A0A57F07 /* OSDOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CB78E5DECE40B9A0A50010 /* OSDOverlay.swift */; };
+		C6CB78E5DECE40B9A0A57F08 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C6CB78E5DECE40B9A0A50011 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		C6CB78E5DECE40B9A0A50001 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		C6CB78E5DECE40B9A0A50002 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		C6CB78E5DECE40B9A0A50003 /* BrightnessKeyInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrightnessKeyInterceptor.swift; sourceTree = "<group>"; };
+		C6CB78E5DECE40B9A0A50004 /* DisplayRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayRouter.swift; sourceTree = "<group>"; };
+		C6CB78E5DECE40B9A0A50005 /* InternalBrightnessController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternalBrightnessController.swift; sourceTree = "<group>"; };
+		C6CB78E5DECE40B9A0A50006 /* ExternalBrightnessController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalBrightnessController.swift; sourceTree = "<group>"; };
+		C6CB78E5DECE40B9A0A50007 /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
+		C6CB78E5DECE40B9A0A50008 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C6CB78E5DECE40B9A0A50009 /* BrightCursor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BrightCursor.entitlements; sourceTree = "<group>"; };
+		C6CB78E5DECE40B9A0A50010 /* OSDOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSDOverlay.swift; sourceTree = "<group>"; };
+		C6CB78E5DECE40B9A0A50011 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C6CB78E5DECE40B9A0A5000A /* BrightnessJustWorks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BrightnessJustWorks.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C6CB78E5DECE40B9A0A5BB01 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		C6CB78E5DECE40B9A0A5CC00 /* BrightCursor */ = {
+			isa = PBXGroup;
+			children = (
+				C6CB78E5DECE40B9A0A50001 /* main.swift */,
+				C6CB78E5DECE40B9A0A50002 /* AppDelegate.swift */,
+				C6CB78E5DECE40B9A0A50003 /* BrightnessKeyInterceptor.swift */,
+				C6CB78E5DECE40B9A0A50004 /* DisplayRouter.swift */,
+				C6CB78E5DECE40B9A0A50005 /* InternalBrightnessController.swift */,
+				C6CB78E5DECE40B9A0A50006 /* ExternalBrightnessController.swift */,
+				C6CB78E5DECE40B9A0A50010 /* OSDOverlay.swift */,
+				C6CB78E5DECE40B9A0A50011 /* Assets.xcassets */,
+				C6CB78E5DECE40B9A0A50007 /* Bridging-Header.h */,
+				C6CB78E5DECE40B9A0A50008 /* Info.plist */,
+				C6CB78E5DECE40B9A0A50009 /* BrightCursor.entitlements */,
+			);
+			path = BrightCursor;
+			sourceTree = "<group>";
+		};
+		C6CB78E5DECE40B9A0A5CC01 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C6CB78E5DECE40B9A0A5000A /* BrightnessJustWorks.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C6CB78E5DECE40B9A0A5CC02 /* root */ = {
+			isa = PBXGroup;
+			children = (
+				C6CB78E5DECE40B9A0A5CC00 /* BrightCursor */,
+				C6CB78E5DECE40B9A0A5CC01 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C6CB78E5DECE40B9A0A5TT01 /* BrightnessJustWorks */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C6CB78E5DECE40B9A0A5CL01 /* Build configuration list for PBXNativeTarget "BrightnessJustWorks" */;
+			buildPhases = (
+				C6CB78E5DECE40B9A0A5SR01 /* Sources */,
+				C6CB78E5DECE40B9A0A5BB01 /* Frameworks */,
+				C6CB78E5DECE40B9A0A5RR01 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BrightnessJustWorks;
+			productName = BrightnessJustWorks;
+			productReference = C6CB78E5DECE40B9A0A5000A /* BrightnessJustWorks.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C6CB78E5DECE40B9A0A5PP01 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					C6CB78E5DECE40B9A0A5TT01 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+				};
+			};
+			buildConfigurationList = C6CB78E5DECE40B9A0A5CL00 /* Build configuration list for PBXProject "BrightnessJustWorks" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = C6CB78E5DECE40B9A0A5CC02 /* root */;
+			productRefGroup = C6CB78E5DECE40B9A0A5CC01 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C6CB78E5DECE40B9A0A5TT01 /* BrightnessJustWorks */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C6CB78E5DECE40B9A0A5RR01 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C6CB78E5DECE40B9A0A57F08 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C6CB78E5DECE40B9A0A5SR01 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C6CB78E5DECE40B9A0A57F01 /* main.swift in Sources */,
+				C6CB78E5DECE40B9A0A57F02 /* AppDelegate.swift in Sources */,
+				C6CB78E5DECE40B9A0A57F03 /* BrightnessKeyInterceptor.swift in Sources */,
+				C6CB78E5DECE40B9A0A57F04 /* DisplayRouter.swift in Sources */,
+				C6CB78E5DECE40B9A0A57F05 /* InternalBrightnessController.swift in Sources */,
+				C6CB78E5DECE40B9A0A57F06 /* ExternalBrightnessController.swift in Sources */,
+				C6CB78E5DECE40B9A0A57F07 /* OSDOverlay.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		C6CB78E5DECE40B9A0A5BC01 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_CYCLE = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		C6CB78E5DECE40B9A0A5BC02 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_CYCLE = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		C6CB78E5DECE40B9A0A5BC03 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = BrightCursor/BrightCursor.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				EXECUTABLE_NAME = BrightnessJustWorks;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"/System/Library/PrivateFrameworks",
+				);
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = BrightCursor/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					IOKit,
+					"-framework",
+					AppKit,
+					"-framework",
+					CoreGraphics,
+					"-weak_framework",
+					CoreDisplay,
+					"-weak_framework",
+					DisplayServices,
+					"-weak_framework",
+					OSD,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightnessjustworks.app;
+				PRODUCT_NAME = BrightnessJustWorks;
+				SWIFT_OBJC_BRIDGING_HEADER = BrightCursor/Bridging-Header.h;
+				SWIFT_VERSION = 6.0;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		C6CB78E5DECE40B9A0A5BC04 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = BrightCursor/BrightCursor.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				EXECUTABLE_NAME = BrightnessJustWorks;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"/System/Library/PrivateFrameworks",
+				);
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = BrightCursor/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					IOKit,
+					"-framework",
+					AppKit,
+					"-framework",
+					CoreGraphics,
+					"-weak_framework",
+					CoreDisplay,
+					"-weak_framework",
+					DisplayServices,
+					"-weak_framework",
+					OSD,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightnessjustworks.app;
+				PRODUCT_NAME = BrightnessJustWorks;
+				SWIFT_OBJC_BRIDGING_HEADER = BrightCursor/Bridging-Header.h;
+				SWIFT_VERSION = 6.0;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C6CB78E5DECE40B9A0A5CL00 /* Build configuration list for PBXProject "StupidSimpleBrightness" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C6CB78E5DECE40B9A0A5BC01 /* Debug */,
+				C6CB78E5DECE40B9A0A5BC02 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C6CB78E5DECE40B9A0A5CL01 /* Build configuration list for PBXNativeTarget "BrightnessJustWorks" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C6CB78E5DECE40B9A0A5BC03 /* Debug */,
+				C6CB78E5DECE40B9A0A5BC04 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = C6CB78E5DECE40B9A0A5PP01 /* Project object */;
+}
