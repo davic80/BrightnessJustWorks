@@ -6,6 +6,7 @@
 import AppKit
 import ApplicationServices
 
+@MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: - Properties

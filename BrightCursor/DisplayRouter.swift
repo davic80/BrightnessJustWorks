@@ -4,7 +4,7 @@
 
 import AppKit
 import CoreGraphics
-import os.log
+import OSLog
 
 @MainActor
 final class DisplayRouter {
@@ -17,8 +17,9 @@ final class DisplayRouter {
 
     private init() {
         // Pre-cache the external display service map on a background thread.
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            self?.externalController.buildServiceMap()
+        let ext = externalController
+        Task.detached(priority: .userInitiated) {
+            ext.buildServiceMap()
         }
 
         // Rebuild the map whenever display configuration changes.
@@ -27,8 +28,10 @@ final class DisplayRouter {
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            DispatchQueue.global(qos: .userInitiated).async {
-                self?.externalController.buildServiceMap()
+            guard let self else { return }
+            let ext = self.externalController
+            Task.detached(priority: .userInitiated) {
+                ext.buildServiceMap()
             }
         }
     }

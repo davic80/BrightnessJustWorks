@@ -59,7 +59,7 @@ private struct DisplayServiceMatch {
 
 // MARK: - Controller
 
-final class ExternalBrightnessController {
+final class ExternalBrightnessController: @unchecked Sendable {
 
     private let logger = Logger(subsystem: "com.bjw.app", category: "ExternalDDC")
 
