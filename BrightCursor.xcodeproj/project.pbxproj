@@ -13,7 +13,7 @@
 		C6CB78E5DECE40B9A0A57F04 /* DisplayRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CB78E5DECE40B9A0A50004 /* DisplayRouter.swift */; };
 		C6CB78E5DECE40B9A0A57F05 /* InternalBrightnessController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CB78E5DECE40B9A0A50005 /* InternalBrightnessController.swift */; };
 		C6CB78E5DECE40B9A0A57F06 /* ExternalBrightnessController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CB78E5DECE40B9A0A50006 /* ExternalBrightnessController.swift */; };
-		C6CB78E5DECE40B9A0A57F07 /* OSDOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CB78E5DECE40B9A0A50010 /* OSDOverlay.swift */; };
+		C6CB78E5DECE40B9A0A57F07 /* BrightnessOverlayWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CB78E5DECE40B9A0A50010 /* BrightnessOverlayWindow.swift */; };
 		C6CB78E5DECE40B9A0A57F08 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C6CB78E5DECE40B9A0A50011 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -27,7 +27,7 @@
 		C6CB78E5DECE40B9A0A50007 /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		C6CB78E5DECE40B9A0A50008 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C6CB78E5DECE40B9A0A50009 /* BrightCursor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BrightCursor.entitlements; sourceTree = "<group>"; };
-		C6CB78E5DECE40B9A0A50010 /* OSDOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSDOverlay.swift; sourceTree = "<group>"; };
+		C6CB78E5DECE40B9A0A50010 /* BrightnessOverlayWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrightnessOverlayWindow.swift; sourceTree = "<group>"; };
 		C6CB78E5DECE40B9A0A50011 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C6CB78E5DECE40B9A0A5000A /* BrightnessJustWorks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BrightnessJustWorks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -52,7 +52,7 @@
 				C6CB78E5DECE40B9A0A50004 /* DisplayRouter.swift */,
 				C6CB78E5DECE40B9A0A50005 /* InternalBrightnessController.swift */,
 				C6CB78E5DECE40B9A0A50006 /* ExternalBrightnessController.swift */,
-				C6CB78E5DECE40B9A0A50010 /* OSDOverlay.swift */,
+				C6CB78E5DECE40B9A0A50010 /* BrightnessOverlayWindow.swift */,
 				C6CB78E5DECE40B9A0A50011 /* Assets.xcassets */,
 				C6CB78E5DECE40B9A0A50007 /* Bridging-Header.h */,
 				C6CB78E5DECE40B9A0A50008 /* Info.plist */,
@@ -169,7 +169,7 @@
 				C6CB78E5DECE40B9A0A57F04 /* DisplayRouter.swift in Sources */,
 				C6CB78E5DECE40B9A0A57F05 /* InternalBrightnessController.swift in Sources */,
 				C6CB78E5DECE40B9A0A57F06 /* ExternalBrightnessController.swift in Sources */,
-				C6CB78E5DECE40B9A0A57F07 /* OSDOverlay.swift in Sources */,
+				C6CB78E5DECE40B9A0A57F07 /* BrightnessOverlayWindow.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
