@@ -51,11 +51,11 @@ final class DisplayRouter {
         if isBuiltin {
             if let newValue = internalController.adjustBrightness(displayID: displayID, increase: increase) {
                 let percent = Int((newValue * 100).rounded())
-                OSDOverlay.shared.show(displayID: displayID, brightnessPercent: percent)
+                BrightnessOverlay.shared.show(displayID: displayID, brightnessPercent: percent)
             }
         } else {
             if let newValue = externalController.adjustBrightness(displayID: displayID, increase: increase) {
-                OSDOverlay.shared.show(displayID: displayID, brightnessPercent: newValue)
+                BrightnessOverlay.shared.show(displayID: displayID, brightnessPercent: newValue)
             }
         }
     }
