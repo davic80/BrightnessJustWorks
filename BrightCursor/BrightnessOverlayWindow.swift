@@ -1,43 +1,163 @@
 // BrightnessOverlayWindow.swift
 // Displays a native macOS-style brightness OSD on whichever screen the cursor
-// is on. Mimics the system volume/brightness bezel: dark vibrancy background,
-// sun SF Symbol, row of 16 chiclets, auto-dismiss after 2 s with fade.
+// is on. Dark rounded panel, SF Symbol sun icon, single continuous pill
+// progress bar with a smooth CoreAnimation fill transition, auto-dismiss
+// after 2 s with fade.
 //
 // One NSPanel is created per CGDirectDisplayID and reused on repeat presses.
 // All methods must be called on the main actor.
 
 import AppKit
 import OSLog
+import QuartzCore
 
 // MARK: - Constants
 
-private let kOverlayWidth: CGFloat = 200
-private let kOverlayHeight: CGFloat = 200
-private let kCornerRadius: CGFloat = 18
-private let kIconSize: CGFloat = 48
-private let kChicletCount: Int = 16
-private let kChicletHeight: CGFloat = 8
-private let kChicletSpacing: CGFloat = 4
-private let kFadeDuration: TimeInterval = 0.35
+private let kOverlayWidth: CGFloat  = 220
+private let kOverlayHeight: CGFloat = 100
+private let kCornerRadius: CGFloat  = 16
+private let kIconSize: CGFloat      = 28
+private let kBarHeight: CGFloat     = 8
+private let kBarCorner: CGFloat     = 4
+private let kHorizPadding: CGFloat  = 20
+private let kVertPadding: CGFloat   = 16
+private let kFadeDuration: TimeInterval    = 0.35
 private let kDisplayDuration: TimeInterval = 1.8
+private let kFillAnimation: CFTimeInterval = 0.18
 private let overlayLogger = Logger(subsystem: "com.bjw.app", category: "BrightnessOverlay")
+
+// MARK: - Pill progress bar (CALayer-backed)
+
+/// A pill-shaped progress track with a smooth animated fill layer.
+private final class PillProgressView: NSView {
+
+    // 0.0 … 1.0
+    var progress: CGFloat = 0 {
+        didSet { animateFill(to: max(0, min(1, progress))) }
+    }
+
+    private let trackLayer = CALayer()
+    private let fillLayer  = CALayer()
+
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        wantsLayer = true
+        setupLayers()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        wantsLayer = true
+        setupLayers()
+    }
+
+    private func setupLayers() {
+        guard let root = layer else { return }
+
+        // Track (dim pill)
+        trackLayer.backgroundColor = NSColor(white: 1, alpha: 0.22).cgColor
+        trackLayer.cornerRadius    = kBarCorner
+        trackLayer.masksToBounds   = true
+        trackLayer.frame           = root.bounds
+        root.addSublayer(trackLayer)
+
+        // Fill (bright pill, anchored left)
+        fillLayer.backgroundColor = NSColor.white.cgColor
+        fillLayer.cornerRadius    = kBarCorner
+        fillLayer.masksToBounds   = true
+        fillLayer.anchorPoint     = CGPoint(x: 0, y: 0.5)
+        fillLayer.position        = CGPoint(x: 0, y: root.bounds.midY)
+        fillLayer.bounds          = CGRect(x: 0, y: 0, width: 0, height: root.bounds.height)
+        root.addSublayer(fillLayer)
+    }
+
+    override func layout() {
+        super.layout()
+        guard let root = layer else { return }
+        trackLayer.frame = root.bounds
+        // Re-anchor fill without animation after a resize
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        fillLayer.position = CGPoint(x: 0, y: root.bounds.midY)
+        fillLayer.bounds = CGRect(x: 0, y: 0, width: root.bounds.width * progress, height: root.bounds.height)
+        CATransaction.commit()
+    }
+
+    private func animateFill(to newProgress: CGFloat) {
+        guard let root = layer else { return }
+        let targetWidth = root.bounds.width * newProgress
+
+        let anim            = CABasicAnimation(keyPath: "bounds.size.width")
+        anim.fromValue      = fillLayer.presentation()?.bounds.width ?? fillLayer.bounds.width
+        anim.toValue        = targetWidth
+        anim.duration       = kFillAnimation
+        anim.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+        anim.fillMode       = .forwards
+        anim.isRemovedOnCompletion = false
+
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        fillLayer.bounds = CGRect(x: 0, y: 0, width: targetWidth, height: root.bounds.height)
+        CATransaction.commit()
+
+        fillLayer.add(anim, forKey: "fillWidth")
+    }
+}
 
 // MARK: - Overlay content view
 
-/// Dark-vibrancy rounded panel content: icon + chiclet bar.
+/// Dark rounded panel: sun icon (left) + pill progress bar (right).
 private final class OverlayContentView: NSView {
 
-    var filledChiclets: Int = 0 {
-        didSet { needsDisplay = true }
+    // swiftlint:disable:next implicitly_unwrapped_optional
+    private var pillView: PillProgressView!
+
+    var brightnessFraction: CGFloat = 0 {
+        didSet { pillView.progress = brightnessFraction }
     }
 
     override var isFlipped: Bool { true }
 
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        setupSubviews()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupSubviews()
+    }
+
+    private func setupSubviews() {
+        wantsLayer = true
+
+        // Icon sits left-centre
+        let iconY = (kOverlayHeight - kIconSize) / 2
+        let iconView = NSImageView(frame: CGRect(
+            x: kHorizPadding,
+            y: iconY,
+            width: kIconSize,
+            height: kIconSize))
+        let cfg = NSImage.SymbolConfiguration(pointSize: kIconSize * 0.72, weight: .medium)
+        iconView.image = NSImage(systemSymbolName: "sun.max.fill", accessibilityDescription: nil)?
+            .withSymbolConfiguration(cfg)
+        iconView.contentTintColor = .white
+        iconView.imageScaling     = .scaleProportionallyUpOrDown
+        addSubview(iconView)
+
+        // Pill bar fills the remaining horizontal space
+        let barX = kHorizPadding + kIconSize + kHorizPadding * 0.75
+        let barW = kOverlayWidth - barX - kHorizPadding
+        let barY = (kOverlayHeight - kBarHeight) / 2
+        pillView = PillProgressView(frame: CGRect(x: barX, y: barY, width: barW, height: kBarHeight))
+        addSubview(pillView)
+    }
+
     override func draw(_ dirtyRect: NSRect) {
         guard let ctx = NSGraphicsContext.current?.cgContext else { return }
 
-        // Background: dark rounded rect
-        ctx.setFillColor(NSColor(white: 0.12, alpha: 0.85).cgColor)
+        // Background: dark rounded rect with slight translucency
+        ctx.setFillColor(NSColor(white: 0.10, alpha: 0.88).cgColor)
         let path = CGPath(
             roundedRect: bounds,
             cornerWidth: kCornerRadius,
@@ -46,42 +166,7 @@ private final class OverlayContentView: NSView {
         ctx.addPath(path)
         ctx.fillPath()
 
-        // Sun icon — SF Symbol drawn via NSImage
-        let iconConfig = NSImage.SymbolConfiguration(pointSize: kIconSize, weight: .medium)
-        if let icon = NSImage(systemSymbolName: "sun.max.fill", accessibilityDescription: nil)?
-            .withSymbolConfiguration(iconConfig) {
-            icon.isTemplate = false
-            let iconRect = CGRect(
-                x: (bounds.width - kIconSize) / 2,
-                y: 28,
-                width: kIconSize,
-                height: kIconSize)
-            NSColor.white.setFill()
-            icon.draw(in: iconRect)
-        }
-
-        // Chiclet bar
-        let totalWidth = CGFloat(kChicletCount) * (kChicletHeight + kChicletSpacing) - kChicletSpacing
-        let barStartX = (bounds.width - totalWidth) / 2
-        let barY = bounds.height - 36
-
-        for index in 0..<kChicletCount {
-            let filled = index < filledChiclets
-            let color: NSColor = filled
-                ? NSColor(white: 1.0, alpha: 1.0)
-                : NSColor(white: 1.0, alpha: 0.25)
-            ctx.setFillColor(color.cgColor)
-
-            let chicletX = barStartX + CGFloat(index) * (kChicletHeight + kChicletSpacing)
-            let chicletRect = CGRect(x: chicletX, y: barY, width: kChicletHeight, height: kChicletHeight)
-            let chicletPath = CGPath(
-                roundedRect: chicletRect,
-                cornerWidth: 2,
-                cornerHeight: 2,
-                transform: nil)
-            ctx.addPath(chicletPath)
-            ctx.fillPath()
-        }
+        super.draw(dirtyRect)
     }
 }
 
@@ -94,23 +179,22 @@ final class BrightnessOverlay {
     private init() {}
 
     // One panel + content view per display
-    private var panels: [CGDirectDisplayID: NSPanel] = [:]
+    private var panels: [CGDirectDisplayID: NSPanel]              = [:]
     private var contentViews: [CGDirectDisplayID: OverlayContentView] = [:]
-    private var dismissTimers: [CGDirectDisplayID: Timer] = [:]
+    private var dismissTimers: [CGDirectDisplayID: Timer]         = [:]
 
     // MARK: - Public
 
     func show(displayID: CGDirectDisplayID, brightnessPercent: Int) {
-        let filled = max(0, min(100, brightnessPercent)) * kChicletCount / 100
+        let fraction = CGFloat(max(0, min(100, brightnessPercent))) / 100.0
 
         let panel = panel(for: displayID)
-        let content = contentViews[displayID]
-        content?.filledChiclets = filled
+        contentViews[displayID]?.brightnessFraction = fraction
 
         // Cancel any pending dismiss
         dismissTimers[displayID]?.invalidate()
 
-        // Show with fade-in
+        // Fade in
         panel.alphaValue = 0
         panel.orderFrontRegardless()
         NSAnimationContext.runAnimationGroup { ctx in
@@ -118,7 +202,7 @@ final class BrightnessOverlay {
             panel.animator().alphaValue = 1
         }
 
-        // Schedule fade-out + close
+        // Schedule fade-out
         let timer = Timer.scheduledTimer(
             withTimeInterval: kDisplayDuration,
             repeats: false
@@ -129,7 +213,7 @@ final class BrightnessOverlay {
         }
         dismissTimers[displayID] = timer
 
-        overlayLogger.debug("Overlay shown: display=\(displayID) filled=\(filled)/\(kChicletCount)")
+        overlayLogger.debug("Overlay shown: display=\(displayID) brightness=\(brightnessPercent)%")
     }
 
     // MARK: - Private
@@ -152,33 +236,31 @@ final class BrightnessOverlay {
             styleMask: [.borderless, .nonactivatingPanel],
             backing: .buffered,
             defer: false)
-        panel.level = .screenSaver
-        panel.backgroundColor = .clear
-        panel.isOpaque = false
-        panel.hasShadow = true
+        panel.level             = .screenSaver
+        panel.backgroundColor   = .clear
+        panel.isOpaque          = false
+        panel.hasShadow         = true
         panel.ignoresMouseEvents = true
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
 
-        let content = OverlayContentView(frame: CGRect(origin: .zero,
-                                                       size: CGSize(width: kOverlayWidth,
-                                                                    height: kOverlayHeight)))
+        let content = OverlayContentView(frame: CGRect(
+            origin: .zero,
+            size: CGSize(width: kOverlayWidth, height: kOverlayHeight)))
         panel.contentView = content
         panels[displayID] = panel
         contentViews[displayID] = content
         return panel
     }
 
-    /// Returns the overlay rect centred horizontally, ~40 % from top on the given display's screen.
+    /// Returns the overlay rect centred horizontally, ~42 % from the top of the given display.
     private func overlayRect(for displayID: CGDirectDisplayID) -> CGRect {
-        // Find the NSScreen matching this displayID
         let screen = NSScreen.screens.first {
             ($0.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? CGDirectDisplayID) == displayID
         } ?? NSScreen.main ?? NSScreen.screens[0]
 
-        let screenFrame = screen.frame
-        let overlayX = screenFrame.midX - kOverlayWidth / 2
-        // Position ~58 % from the bottom (≈ 42 % from the top) — matches system OSD
-        let overlayY = screenFrame.minY + screenFrame.height * 0.58 - kOverlayHeight / 2
+        let sf       = screen.frame
+        let overlayX = sf.midX - kOverlayWidth / 2
+        let overlayY = sf.minY + sf.height * 0.58 - kOverlayHeight / 2
 
         return CGRect(x: overlayX, y: overlayY, width: kOverlayWidth, height: kOverlayHeight)
     }
