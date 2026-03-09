@@ -14,15 +14,14 @@ private let kStep: Float = 0.0625   // 1 ÷ 16 steps
 
 final class InternalBrightnessController {
 
-    private let log = OSLog(subsystem: "com.bjw.app", category: "InternalBrightness")
+    private let logger = Logger(subsystem: "com.bjw.app", category: "InternalBrightness")
 
     @discardableResult
     func adjustBrightness(displayID: CGDirectDisplayID, increase: Bool) -> Float? {
         var current: Float = 0.5
         let getResult = DisplayServicesGetBrightness(displayID, &current)
         if getResult != 0 {
-            os_log("DisplayServicesGetBrightness failed (%d) for display %u — using 0.5",
-                   log: log, type: .error, getResult, displayID)
+            logger.error("DisplayServicesGetBrightness failed (\(getResult)) for display \(displayID) — using 0.5")
             current = 0.5
         }
 
@@ -31,12 +30,10 @@ final class InternalBrightnessController {
 
         let setResult = DisplayServicesSetBrightness(displayID, newValue)
         if setResult == 0 {
-            os_log("Internal brightness set to %.3f on display %u",
-                   log: log, type: .info, newValue, displayID)
+            logger.info("Internal brightness set to \(newValue, format: .fixed(precision: 3)) on display \(displayID)")
             return newValue
         } else {
-            os_log("DisplayServicesSetBrightness failed (%d) for display %u",
-                   log: log, type: .error, setResult, displayID)
+            logger.error("DisplayServicesSetBrightness failed (\(setResult)) for display \(displayID)")
             return nil
         }
     }

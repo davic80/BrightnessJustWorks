@@ -11,7 +11,7 @@ final class DisplayRouter {
 
     static let shared = DisplayRouter()
 
-    private let log = OSLog(subsystem: "com.bjw.app", category: "DisplayRouter")
+    private let logger = Logger(subsystem: "com.bjw.app", category: "DisplayRouter")
     private let internalController = InternalBrightnessController()
     private let externalController = ExternalBrightnessController()
 
@@ -38,24 +38,21 @@ final class DisplayRouter {
     /// Called by BrightnessKeyInterceptor on every brightness key press.
     func adjustBrightness(increase: Bool) {
         guard let (displayID, screenName) = displayUnderCursor() else {
-            os_log("Could not determine display under cursor.", log: log, type: .error)
+            logger.error("Could not determine display under cursor.")
             return
         }
 
         let isBuiltin = CGDisplayIsBuiltin(displayID) != 0
-        os_log("Key press: display=%u (%{public}@) builtin=%d increase=%d",
-               log: log, type: .default, displayID, screenName, isBuiltin ? 1 : 0, increase ? 1 : 0)
+        logger.debug("Key press: display=\(displayID) (\(screenName)) builtin=\(isBuiltin) increase=\(increase)")
 
         if isBuiltin {
             if let newValue = internalController.adjustBrightness(displayID: displayID, increase: increase) {
                 let percent = Int((newValue * 100).rounded())
-                OSDOverlay.shared.show(displayID: displayID,
-                                       brightnessPercent: percent)
+                OSDOverlay.shared.show(displayID: displayID, brightnessPercent: percent)
             }
         } else {
             if let newValue = externalController.adjustBrightness(displayID: displayID, increase: increase) {
-                OSDOverlay.shared.show(displayID: displayID,
-                                       brightnessPercent: newValue)
+                OSDOverlay.shared.show(displayID: displayID, brightnessPercent: newValue)
             }
         }
     }
@@ -66,18 +63,19 @@ final class DisplayRouter {
     private func displayUnderCursor() -> (CGDirectDisplayID, String)? {
         let mouseLocation = NSEvent.mouseLocation
         guard let screen = NSScreen.screens.first(where: { NSMouseInRect(mouseLocation, $0.frame, false) }) else {
-            os_log("No screen found for cursor at (%.0f, %.0f) — screens: %{public}@",
-                   log: log, type: .error,
-                   mouseLocation.x, mouseLocation.y,
-                   NSScreen.screens.map { "\($0.localizedName):\($0.frame)" }.joined(separator: ", "))
+            let screenList = NSScreen.screens
+                .map { "\($0.localizedName):\($0.frame)" }
+                .joined(separator: ", ")
+            let pos = "(\(mouseLocation.x), \(mouseLocation.y))"
+            logger.error("No screen found for cursor at \(pos) — screens: \(screenList)")
             return nil
         }
-        guard let displayID = screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? CGDirectDisplayID else {
+        guard let displayID = screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")]
+            as? CGDirectDisplayID else {
             return nil
         }
-        os_log("Cursor at (%.0f, %.0f) → display %u (%{public}@)",
-               log: log, type: .default,
-               mouseLocation.x, mouseLocation.y, displayID, screen.localizedName)
+        let pos = "(\(mouseLocation.x), \(mouseLocation.y))"
+        logger.debug("Cursor at \(pos) → display \(displayID) (\(screen.localizedName))")
         return (displayID, screen.localizedName)
     }
 }

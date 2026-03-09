@@ -18,9 +18,9 @@ import os.log
 // Image index for the brightness sun icon inside OSDUIHelper.app
 private let kOSDBrightnessImage: Int64 = 1
 private let kOSDPriority: UInt32 = 0x1f4       // 500 — matches system default
-private let kOSDFadeMs:   UInt32 = 2000         // 2 s before fade
+private let kOSDFadeMs: UInt32 = 2000           // 2 s before fade
 private let kOSDTotalChiclets: UInt32 = 16
-private let osdLog = OSLog(subsystem: "com.bjw.app", category: "OSDOverlay")
+private let osdLogger = Logger(subsystem: "com.bjw.app", category: "OSDOverlay")
 
 @MainActor
 final class OSDOverlay {
@@ -30,29 +30,28 @@ final class OSDOverlay {
 
     /// Show the brightness OSD on the given display.
     /// - Parameters:
-    ///   - displayID:        The CGDirectDisplayID to show the OSD on.
+    ///   - displayID:         The CGDirectDisplayID to show the OSD on.
     ///   - brightnessPercent: 0–100 integer percentage to display.
-    func show(displayID: CGDirectDisplayID,
-              brightnessPercent: Int) {
-
+    func show(displayID: CGDirectDisplayID, brightnessPercent: Int) {
         guard let manager = OSDManager.sharedManager() as? OSDManager else {
-            os_log("OSDOverlay: failed to get OSDManager.sharedManager()", log: osdLog, type: .error)
+            osdLogger.error("OSDOverlay: failed to get OSDManager.sharedManager()")
             return
         }
 
         // Map 0–100 % to 0–16 chiclets
         let filled = UInt32(max(0, min(100, brightnessPercent)) * Int(kOSDTotalChiclets) / 100)
 
-        manager.showImage(kOSDBrightnessImage,
-                          onDisplayID: displayID,
-                          priority: kOSDPriority,
-                          msecUntilFade: kOSDFadeMs,
-                          filledChiclets: filled,
-                          totalChiclets: kOSDTotalChiclets,
-                          locked: false)
+        manager.showImage(
+            kOSDBrightnessImage,
+            onDisplayID: displayID,
+            priority: kOSDPriority,
+            msecUntilFade: kOSDFadeMs,
+            filledChiclets: filled,
+            totalChiclets: kOSDTotalChiclets,
+            locked: false)
 
-        os_log("OSDOverlay: brightness %d%% (%d/%d chiclets) on display %u",
-               log: osdLog, type: .debug,
-               brightnessPercent, filled, kOSDTotalChiclets, displayID)
+        let chicletInfo = "\(filled)/\(kOSDTotalChiclets)"
+        // swiftlint:disable:next line_length
+        osdLogger.debug("OSDOverlay: brightness \(brightnessPercent)% (\(chicletInfo) chiclets) on display \(displayID)")
     }
 }

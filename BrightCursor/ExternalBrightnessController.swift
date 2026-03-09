@@ -23,45 +23,45 @@
 import Foundation
 import IOKit
 import CoreGraphics
-import os.log
+import OSLog
 
 // MARK: - Constants
 
-private let kDDCChipAddress:  UInt32 = 0x37   // 7-bit I2C address for DDC
-private let kDDCDataAddress:  UInt32 = 0x51
-private let kVCPBrightness:   UInt8  = 0x10
+private let kDDCChipAddress: UInt32 = 0x37   // 7-bit I2C address for DDC
+private let kDDCDataAddress: UInt32 = 0x51
+private let kVCPBrightness: UInt8 = 0x10
 private let kDDCMaxBrightness: Int   = 100
 private let kDDCBrightnessStep: Int  = 6      // ~1/16 of 100
-private let kWriteSleepUs:    UInt32 = 10_000  // 10 ms before write
-private let kReadSleepUs:     UInt32 = 50_000  // 50 ms before read
-private let kRetrySleepUs:    UInt32 = 20_000  // 20 ms between retries
-private let kWriteCycles:     Int    = 2
-private let kRetryAttempts:   Int    = 4
+private let kWriteSleepUs: UInt32 = 10_000  // 10 ms before write
+private let kReadSleepUs: UInt32 = 50_000  // 50 ms before read
+private let kRetrySleepUs: UInt32 = 20_000  // 20 ms between retries
+private let kWriteCycles: Int    = 2
+private let kRetryAttempts: Int = 4
 
 // MARK: - Supporting types
 
 private struct IORegService {
-    var edidUUID:              String = ""
-    var productName:           String = ""
-    var serialNumber:          Int64  = 0
-    var ioDisplayLocation:     String = ""
-    var location:              String = ""
-    var serviceLocation:       Int    = 0
-    var avService:             IOAVService? = nil
+    var edidUUID: String = ""
+    var productName: String = ""
+    var serialNumber: Int64 = 0
+    var ioDisplayLocation: String = ""
+    var location: String = ""
+    var serviceLocation: Int = 0
+    var avService: IOAVService?
 }
 
 private struct DisplayServiceMatch {
-    var displayID:      CGDirectDisplayID
-    var avService:      IOAVService?
+    var displayID: CGDirectDisplayID
+    var avService: IOAVService?
     var serviceLocation: Int
-    var score:          Int
+    var score: Int
 }
 
 // MARK: - Controller
 
 final class ExternalBrightnessController {
 
-    private let log = OSLog(subsystem: "com.bjw.app", category: "ExternalDDC")
+    private let logger = Logger(subsystem: "com.bjw.app", category: "ExternalDDC")
 
     // displayID → (avService, serviceLocation)
     private var serviceMap: [CGDirectDisplayID: IOAVService] = [:]
@@ -109,15 +109,15 @@ final class ExternalBrightnessController {
             newMap[candidate.displayID] = svc
             matchedDisplays.insert(candidate.displayID)
             matched.insert(candidate.serviceLocation)
-            os_log("Matched display %u → service location %d (score %d)",
-                   log: log, type: .info,
-                   candidate.displayID, candidate.serviceLocation, candidate.score)
+            let score = candidate.score
+            let loc = candidate.serviceLocation
+            logger.info("Matched display \(candidate.displayID) → service location \(loc) (score \(score))")
         }
 
         lock.lock()
         serviceMap = newMap
         lock.unlock()
-        os_log("Service map built: %d external display(s) mapped.", log: log, type: .info, newMap.count)
+        logger.info("Service map built: \(newMap.count) external display(s) mapped.")
     }
 
     @discardableResult
@@ -127,7 +127,7 @@ final class ExternalBrightnessController {
         lock.unlock()
 
         guard let avService = service else {
-            os_log("No IOAVService for display %u. Rebuilding map…", log: log, type: .error, displayID)
+            logger.error("No IOAVService for display \(displayID). Rebuilding map…")
             buildServiceMap()
             return nil
         }
@@ -146,10 +146,10 @@ final class ExternalBrightnessController {
         let success = writeBrightness(service: avService, value: UInt16(newValue))
         if success {
             brightnessCache[displayID] = newValue
-            os_log("External brightness set to %d on display %u", log: log, type: .info, newValue, displayID)
+            logger.info("External brightness set to \(newValue) on display \(displayID)")
             return newValue
         } else {
-            os_log("DDC write failed for display %u", log: log, type: .error, displayID)
+            logger.error("DDC write failed for display \(displayID)")
             return nil
         }
     }
@@ -280,8 +280,7 @@ final class ExternalBrightnessController {
                     svc.location = location
                     svc.avService = IOAVServiceCreateWithService(kCFAllocatorDefault, entry)?.takeRetainedValue()
                     results.append(svc)
-                    os_log("Found external IOAVService at location %d (%@)",
-                           log: log, type: .debug, svc.serviceLocation, svc.productName)
+                    logger.debug("Found external IOAVService at location \(svc.serviceLocation) (\(svc.productName))")
                 }
             }
         }
@@ -300,7 +299,9 @@ final class ExternalBrightnessController {
 
         // DisplayAttributes → ProductAttributes
         if let unmanaged = IORegistryEntryCreateCFProperty(
-            entry, "DisplayAttributes" as CFString, kCFAllocatorDefault,
+            entry,
+            "DisplayAttributes" as CFString,
+            kCFAllocatorDefault,
             IOOptionBits(kIORegistryIterateRecursively)) {
             let attrs = unmanaged.takeRetainedValue() as? NSDictionary
             if let prod = attrs?["ProductAttributes"] as? NSDictionary {
@@ -337,15 +338,19 @@ final class ExternalBrightnessController {
             let uuid = service.edidUUID
             struct Segment { let offset: Int; let key: String }
             let segments: [Segment] = [
-                Segment(offset: 0,  key: edidVendorSegment(dict: dict)),
-                Segment(offset: 4,  key: edidProductSegment(dict: dict)),
+                Segment(offset: 0, key: edidVendorSegment(dict: dict)),
+                Segment(offset: 4, key: edidProductSegment(dict: dict)),
                 Segment(offset: 19, key: edidMfgDateSegment(dict: dict)),
                 Segment(offset: 30, key: edidSizeSegment(dict: dict)),
             ]
             for seg in segments {
                 guard !seg.key.isEmpty, seg.key != "0000" else { continue }
-                let startIndex = uuid.index(uuid.startIndex, offsetBy: seg.offset, limitedBy: uuid.endIndex) ?? uuid.endIndex
-                let endIndex   = uuid.index(startIndex, offsetBy: 4, limitedBy: uuid.endIndex) ?? uuid.endIndex
+                let startIndex = uuid.index(
+                    uuid.startIndex, offsetBy: seg.offset, limitedBy: uuid.endIndex
+                ) ?? uuid.endIndex
+                let endIndex = uuid.index(
+                    startIndex, offsetBy: 4, limitedBy: uuid.endIndex
+                ) ?? uuid.endIndex
                 if String(uuid[startIndex..<endIndex]) == seg.key { score += 1 }
             }
         }
@@ -376,8 +381,8 @@ final class ExternalBrightnessController {
     }
 
     private func edidProductSegment(dict: NSDictionary) -> String {
-        guard let p = dict[kDisplayProductID] as? Int64 else { return "" }
-        let pid = UInt16(clamping: p)
+        guard let productID = dict[kDisplayProductID] as? Int64 else { return "" }
+        let pid = UInt16(clamping: productID)
         return String(format: "%02X%02X", UInt8(pid & 0xFF), UInt8(pid >> 8))
     }
 

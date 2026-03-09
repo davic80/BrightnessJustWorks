@@ -19,7 +19,7 @@ import os.log
 // NX_SYSDEFINED = 14 (from IOKit/hidsystem/IOLLEvent.h)
 private let kNXSystemDefined: UInt32 = 14
 // NX_KEYTYPE brightness constants
-private let kBrightnessUp:   Int32 = 2
+private let kBrightnessUp: Int32 = 2
 private let kBrightnessDown: Int32 = 3
 // Key-down flag in data1 bits 8-15
 private let kKeyDownFlags: Int = 0x0A00
@@ -28,7 +28,7 @@ final class BrightnessKeyInterceptor {
 
     private var eventTap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
-    private let log = OSLog(subsystem: "com.bjw.app", category: "KeyInterceptor")
+    private let logger = Logger(subsystem: "com.bjw.app", category: "KeyInterceptor")
 
     // MARK: - Start / Stop
 
@@ -51,7 +51,7 @@ final class BrightnessKeyInterceptor {
             },
             userInfo: selfPtr
         ) else {
-            os_log("CGEventTapCreate failed — check Accessibility permission.", log: log, type: .error)
+            logger.error("CGEventTapCreate failed — check Accessibility permission.")
             Unmanaged<BrightnessKeyInterceptor>.fromOpaque(selfPtr).release()
             return
         }
@@ -61,7 +61,7 @@ final class BrightnessKeyInterceptor {
         self.runLoopSource = src
         CFRunLoopAddSource(CFRunLoopGetMain(), src, .commonModes)
         CGEvent.tapEnable(tap: tap, enable: true)
-        os_log("Brightness key interceptor started.", log: log, type: .info)
+        logger.info("Brightness key interceptor started.")
     }
 
     func stop() {
@@ -97,8 +97,8 @@ final class BrightnessKeyInterceptor {
             return Unmanaged.passRetained(event)
         }
 
-        let data1  = nsEvent.data1            // NSInteger, always valid
-        let keyCode  = Int32((data1 & 0xFFFF0000) >> 16)
+        let data1 = nsEvent.data1            // NSInteger, always valid
+        let keyCode = Int32((data1 & 0xFFFF0000) >> 16)
         let keyFlags = data1 & 0x0000FFFF
 
         // Only act on key-down (flags 0x0A00); let key-up through but consume it
@@ -107,13 +107,13 @@ final class BrightnessKeyInterceptor {
         switch keyCode {
         case kBrightnessUp:
             if isKeyDown {
-                os_log("Brightness UP", log: log, type: .debug)
+                logger.debug("Brightness UP")
                 DispatchQueue.main.async { DisplayRouter.shared.adjustBrightness(increase: true) }
             }
             return nil   // consume both up and down events
         case kBrightnessDown:
             if isKeyDown {
-                os_log("Brightness DOWN", log: log, type: .debug)
+                logger.debug("Brightness DOWN")
                 DispatchQueue.main.async { DisplayRouter.shared.adjustBrightness(increase: false) }
             }
             return nil
