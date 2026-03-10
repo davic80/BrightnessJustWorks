@@ -38,7 +38,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         let menu = NSMenu()
-        let title = NSMenuItem(title: "BrightnessJustWorks 1.0", action: nil, keyEquivalent: "")
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
+        let title = NSMenuItem(title: "BrightnessJustWorks \(version)", action: nil, keyEquivalent: "")
         title.isEnabled = false
         menu.addItem(title)
         menu.addItem(.separator())
