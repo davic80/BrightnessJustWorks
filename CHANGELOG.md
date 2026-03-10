@@ -6,6 +6,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [1.2.0] — 2026-03-10
+
+### Added
+
+- macOS `.pkg` installer: installs to `/Applications`, removes quarantine xattr, and auto-launches the app so the Accessibility prompt fires immediately after install
+- **Uninstall…** menu bar item: confirms with an alert, revokes the Accessibility TCC entry (`tccutil reset`), removes `/Applications/BrightnessJustWorks.app`, and quits — a clean, one-click uninstall
+- `docs/screenshots/` with README screenshots: menu bar icon, open menu, OSD overlay on built-in display, OSD overlay on external display
+- Release pipeline now publishes both `.pkg` (easy install) and `.zip` (manual) as assets on every GitHub Release
+
+---
+
 ## [1.1.1] — 2026-03-10
 
 ### Added
@@ -63,6 +74,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ---
 
 <!-- unreleased changes go above this line -->
+[1.2.0]: https://github.com/davic80/BrightnessJustWorks/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/davic80/BrightnessJustWorks/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/davic80/BrightnessJustWorks/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/davic80/BrightnessJustWorks/releases/tag/v1.0.0

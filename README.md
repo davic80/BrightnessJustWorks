@@ -4,9 +4,25 @@ A macOS menu bar utility that routes the physical brightness keys (F1/F2) to whi
 
 ## Download
 
-**[Download the latest pre-compiled binary](https://github.com/davic80/BrightnessJustWorks/releases/latest)**
+**[Download the latest release](https://github.com/davic80/BrightnessJustWorks/releases/latest)**
 
-Unzip, move `BrightnessJustWorks.app` to `~/Applications/`, and follow the [First launch](#first-launch) instructions below.
+Two options are available on every release:
+- `BrightnessJustWorks-vX.Y.Z.pkg` — installer (recommended)
+- `BrightnessJustWorks-vX.Y.Z.zip` — manual drag-and-drop
+
+## Screenshots
+
+### Menu bar icon
+![Menu bar icon](docs/screenshots/menubar-icon.png)
+
+### Menu
+![Menu](docs/screenshots/menu-open.png)
+
+### Brightness overlay — external display
+![OSD overlay on external display](docs/screenshots/osd-external.png)
+
+### Brightness overlay — built-in display
+![OSD overlay on built-in display](docs/screenshots/osd-builtin.png)
 
 ## The problem
 
@@ -29,6 +45,21 @@ macOS hardwires the brightness keys to the built-in display. If your cursor is o
 - Accessibility permission (prompted on first launch)
 - Xcode 14 or later (to build from source only)
 
+## Install
+
+### Using the installer (recommended)
+
+1. Download `BrightnessJustWorks-vX.Y.Z.pkg` from the [latest release](https://github.com/davic80/BrightnessJustWorks/releases/latest).
+2. Double-click the `.pkg` file and follow the installer steps.
+3. The app is placed in `/Applications` and launched automatically.
+4. Grant **Accessibility** access when prompted (see [First launch](#first-launch)).
+
+### Manual install (zip)
+
+1. Download `BrightnessJustWorks-vX.Y.Z.zip`, unzip it.
+2. Move `BrightnessJustWorks.app` to `/Applications/`.
+3. Follow the [First launch](#first-launch) instructions below.
+
 ## First launch
 
 ### 1. Allow the app to open
@@ -43,7 +74,7 @@ To open it anyway:
 2. Choose **Open** from the context menu
 3. Click **Open** in the dialog that appears
 
-You only need to do this once. After that first approval the app opens normally.
+> The `.pkg` installer removes the quarantine attribute automatically — you only need this step for the manual zip install.
 
 ### 2. Grant Accessibility access
 
@@ -54,6 +85,16 @@ Grant it in:
 **System Settings → Privacy & Security → Accessibility → BrightnessJustWorks → toggle on**
 
 The app will start working immediately after permission is granted — no restart needed.
+
+## Uninstall
+
+Click the menu bar icon and choose **Uninstall…**
+
+This will:
+- Ask for confirmation
+- Revoke the Accessibility permission (`tccutil reset`)
+- Remove `/Applications/BrightnessJustWorks.app`
+- Quit the app
 
 ## Building from source
 
@@ -68,16 +109,19 @@ cd BrightnessJustWorks
   SYMROOT=/tmp/BJWBuild
 ```
 
-The built app is at `/tmp/BJWBuild/Release/BrightnessJustWorks.app`.
-
-Copy it to `~/Applications/` (not `/Applications/`) so macOS can grant Accessibility access:
+The built app is at `/tmp/BJWBuild/Release/BrightnessJustWorks.app`. Copy it to `/Applications/`:
 
 ```bash
-cp -R /tmp/BJWBuild/Release/BrightnessJustWorks.app ~/Applications/
-open ~/Applications/BrightnessJustWorks.app
+cp -R /tmp/BJWBuild/Release/BrightnessJustWorks.app /Applications/
+open /Applications/BrightnessJustWorks.app
 ```
 
-> **Important:** Install to `~/Applications/`, not `/tmp` or the Desktop (iCloud Drive). Apps running from those locations will not appear in System Settings → Privacy & Security → Accessibility.
+To build the installer pkg locally:
+
+```bash
+bash installer/build_pkg.sh /tmp/BJWBuild/Release v1.2.0
+# produces: /tmp/BJWBuild/Release/BrightnessJustWorks-v1.2.0.pkg
+```
 
 ## How it works
 

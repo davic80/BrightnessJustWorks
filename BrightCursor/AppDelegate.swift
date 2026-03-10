@@ -47,6 +47,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             title: "Grant Accessibility Access…",
             action: #selector(openAccessibilityPrefs),
             keyEquivalent: ""))
+        menu.addItem(NSMenuItem(
+            title: "Uninstall…",
+            action: #selector(uninstall),
+            keyEquivalent: ""))
         menu.addItem(.separator())
         menu.addItem(NSMenuItem(
             title: "Quit",
@@ -61,17 +65,51 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    // MARK: - Uninstall
+
+    @objc private func uninstall() {
+        let alert = NSAlert()
+        alert.messageText = "Uninstall BrightnessJustWorks?"
+        alert.informativeText = """
+            This will:
+            • Remove BrightnessJustWorks from /Applications
+            • Revoke its Accessibility permission
+            • Quit the app
+
+            This action cannot be undone.
+            """
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "Uninstall")
+        alert.addButton(withTitle: "Cancel")
+
+        guard alert.runModal() == .alertFirstButtonReturn else { return }
+
+        // 1. Revoke Accessibility TCC entry
+        let resetTask = Process()
+        resetTask.launchPath = "/usr/bin/tccutil"
+        resetTask.arguments = ["reset", "Accessibility", "com.brightnessjustworks.app"]
+        try? resetTask.run()
+        resetTask.waitUntilExit()
+
+        // 2. Remove the app bundle from /Applications
+        let appPath = "/Applications/BrightnessJustWorks.app"
+        if FileManager.default.fileExists(atPath: appPath) {
+            try? FileManager.default.removeItem(atPath: appPath)
+        }
+
+        // 3. Quit
+        NSApp.terminate(nil)
+    }
+
     // MARK: - Accessibility
 
     private func requestAccessibilityIfNeeded() {
-        // "AXTrustedCheckOptionPrompt" is the stable string value of kAXTrustedCheckOptionPrompt
         let options = ["AXTrustedCheckOptionPrompt": true] as CFDictionary
         _ = AXIsProcessTrustedWithOptions(options)
 
         if AXIsProcessTrusted() {
             startInterceptor()
         } else {
-            // Poll until granted, then start the interceptor
             DispatchQueue.global().async { [weak self] in
                 while !AXIsProcessTrusted() {
                     Thread.sleep(forTimeInterval: 1.0)

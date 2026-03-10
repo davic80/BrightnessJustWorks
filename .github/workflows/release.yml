@@ -36,6 +36,12 @@ jobs:
           codesign --deep --force --sign - \
             "$RUNNER_TEMP/BJWBuild/Release/BrightnessJustWorks.app"
 
+      - name: Build installer pkg
+        run: |
+          bash installer/build_pkg.sh \
+            "$RUNNER_TEMP/BJWBuild/Release" \
+            "${{ github.ref_name }}"
+
       - name: Zip app bundle
         run: |
           ditto -ck --sequesterRsrc --keepParent \
@@ -49,17 +55,26 @@ jobs:
           body: |
             ## Install
 
-            1. Download `BrightnessJustWorks-${{ github.ref_name }}.zip` below.
-            2. Unzip and move `BrightnessJustWorks.app` to `~/Applications/`.
-            3. Open it — macOS will ask for Accessibility access.
-            4. Grant it in **System Settings → Privacy & Security → Accessibility**.
+            ### Easy install (recommended)
+            1. Download `BrightnessJustWorks-${{ github.ref_name }}.pkg` below and double-click it.
+            2. Follow the installer steps — the app will be placed in `/Applications` and launched automatically.
+            3. Grant **Accessibility** access when prompted.
 
-            > **Apple Silicon only** (M1/M2/M3/M4), macOS 12+.
-            > Because this app uses private APIs it is not signed or notarized.
-            > On first open: right-click → Open → Open to bypass Gatekeeper.
+            ### Manual install (zip)
+            1. Download `BrightnessJustWorks-${{ github.ref_name }}.zip`, unzip it.
+            2. Move `BrightnessJustWorks.app` to `/Applications/`.
+            3. Right-click → **Open** → **Open** to bypass the unidentified developer warning.
+            4. Grant **Accessibility** access when prompted.
+
+            ## Uninstall
+            Open the menu bar icon → **Uninstall…** — this removes the app and revokes its Accessibility permission.
+
+            > **Apple Silicon only** (M series: M1 and later), macOS 12+.
+            > This app uses private APIs and is not signed or notarized with an Apple Developer ID.
 
             See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for what changed.
           files: |
+            ${{ runner.temp }}/BJWBuild/Release/BrightnessJustWorks-${{ github.ref_name }}.pkg
             ${{ runner.temp }}/BJWBuild/Release/BrightnessJustWorks-${{ github.ref_name }}.zip
           draft: false
           prerelease: false
