@@ -31,6 +31,11 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             SYMROOT=$RUNNER_TEMP/BJWBuild
 
+      - name: Ad-hoc sign app bundle
+        run: |
+          codesign --deep --force --sign - \
+            "$RUNNER_TEMP/BJWBuild/Release/BrightnessJustWorks.app"
+
       - name: Zip app bundle
         run: |
           ditto -ck --sequesterRsrc --keepParent \
