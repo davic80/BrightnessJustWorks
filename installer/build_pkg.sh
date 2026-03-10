@@ -9,7 +9,7 @@ set -euo pipefail
 
 BUILD_DIR="${1:?Usage: $0 <build-dir> <version>}"
 VERSION="${2:?Usage: $0 <build-dir> <version>}"
-SCRIPT_DIR="$(cd "$(dirname "$0")/installer" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 WORK_DIR="$(mktemp -d)"
 
 echo "==> Building installer pkg for $VERSION"
