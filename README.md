@@ -12,7 +12,7 @@ macOS hardwires the brightness keys to the built-in display. If your cursor is o
 - Routes brightness up/down to the display under the mouse cursor
 - Controls the **built-in display** via `DisplayServices` (smooth, native)
 - Controls **external monitors** via DDC/CI over Thunderbolt/USB-C using `IOAVService` (Apple Silicon)
-- Shows the native macOS brightness OSD bezel (sun icon + chiclet indicator) on the correct display
+- Shows a native brightness OSD overlay (sun icon + smooth pill progress bar) on the correct display, positioned in the top-right corner just below the menu bar
 - Menu bar only — no Dock icon, no windows
 - Step size: ±6.25% (1/16 steps) for internal; ±6 on 0–100 DDC scale for external
 
@@ -63,11 +63,11 @@ The app will start working immediately after permission is granted — no restar
 | `DisplayRouter` | Finds the `CGDirectDisplayID` of the screen the mouse cursor is on |
 | `InternalBrightnessController` | Calls `DisplayServicesSetBrightness()` for the built-in Retina panel |
 | `ExternalBrightnessController` | Sends DDC VCP code `0x10` (brightness) via `IOAVServiceWriteI2C()` |
-| `OSDOverlay` | Calls `OSDManager.showImage:onDisplayID:priority:msecUntilFade:filledChiclets:totalChiclets:locked:` to show the native bezel |
+| `BrightnessOverlay` | Shows a native `NSPanel` OSD in the top-right corner of the active display — dark rounded pill, SF Symbol sun icon, smooth CAAnimation pill progress bar, auto-dismiss with fade |
 
 ## Why not on the Mac App Store
 
-BrightnessJustWorks relies on private Apple APIs (`IOAVService`, `DisplayServices`, `OSDManager`) and requires the Accessibility event tap — neither of which is permitted in the App Store sandbox. It is distributed directly, similar to other display utilities like [MonitorControl](https://github.com/MonitorControl/MonitorControl).
+BrightnessJustWorks relies on private Apple APIs (`IOAVService`, `DisplayServices`) and requires the Accessibility event tap — neither of which is permitted in the App Store sandbox. It is distributed directly, similar to other display utilities like [MonitorControl](https://github.com/MonitorControl/MonitorControl).
 
 ## License
 
