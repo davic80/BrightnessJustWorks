@@ -188,7 +188,11 @@ final class BrightnessOverlay {
 
         let panel = panel(for: displayID)
 
-        // Update the bar — this animates smoothly via CABasicAnimation
+        // Always recompute position — handles display layout changes and
+        // the cursor moving from one screen to another between presses.
+        panel.setFrame(overlayRect(for: displayID), display: false)
+
+        // Update the bar — animates smoothly via CABasicAnimation
         contentViews[displayID]?.brightnessFraction = fraction
 
         // Reschedule dismiss timer (extends display time while keys are held)
@@ -255,17 +259,21 @@ final class BrightnessOverlay {
     }
 
     /// Top-right corner of the display, just below the menu bar.
+    /// Uses visibleFrame (which macOS keeps correct for every screen — it
+    /// already excludes the menu bar on whichever display hosts it) so the
+    /// overlay is always flush with the top-right regardless of which display
+    /// is primary and regardless of display resolution or arrangement.
     private func overlayRect(for displayID: CGDirectDisplayID) -> CGRect {
         let screen = NSScreen.screens.first {
             ($0.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? CGDirectDisplayID) == displayID
         } ?? NSScreen.main ?? NSScreen.screens[0]
 
-        // visibleFrame excludes the menu bar; frame includes it.
-        // We want to sit just below the menu bar on the right side.
-        let sf       = screen.frame
-        let menuBarH = screen.frame.maxY - screen.visibleFrame.maxY
-        let overlayX = sf.maxX - kOverlayWidth - kRightMargin
-        let overlayY = sf.maxY - menuBarH - kTopMargin - kOverlayHeight
+        // visibleFrame.maxY is the bottom edge of the menu bar on this screen.
+        // visibleFrame.maxX is the right edge (minus any Dock on the right).
+        // We position the overlay in the top-right corner with fixed margins.
+        let vf       = screen.visibleFrame
+        let overlayX = vf.maxX - kOverlayWidth - kRightMargin
+        let overlayY = vf.maxY - kTopMargin - kOverlayHeight
 
         return CGRect(x: overlayX, y: overlayY, width: kOverlayWidth, height: kOverlayHeight)
     }
