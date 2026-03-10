@@ -18,14 +18,17 @@ import QuartzCore
 // MARK: - Constants
 
 private let kOverlayWidth: CGFloat = 220
-private let kOverlayHeight: CGFloat = 56
+private let kOverlayHeight: CGFloat = 76       // increased from 56 to fit text row
 private let kCornerRadius: CGFloat = 14
 private let kIconSize: CGFloat = 20
 private let kBarHeight: CGFloat = 6
 private let kBarCorner: CGFloat = 3
 private let kHorizPadding: CGFloat = 16
-private let kTopMargin: CGFloat = 12          // inset from menu-bar bottom
-private let kRightMargin: CGFloat = 12        // inset from screen right edge
+private let kTopMargin: CGFloat = 12           // inset from menu-bar bottom
+private let kRightMargin: CGFloat = 12         // inset from screen right edge
+private let kTextRowHeight: CGFloat = 18       // height of the display name / % row
+private let kTextTopPad: CGFloat = 10          // space above the text row inside the pill
+private let kTextFontSize: CGFloat = 11
 private let kFadeInDuration: TimeInterval = 0.18
 private let kFadeOutDuration: TimeInterval = 0.40
 private let kDisplayDuration: TimeInterval = 1.8
@@ -110,14 +113,26 @@ private final class PillProgressView: NSView {
 
 // MARK: - Overlay content view
 
-/// Dark rounded pill: sun icon (left) + animated pill progress bar (right).
+/// Dark rounded pill:
+///   Row 1 (top): display name (left) + brightness percentage (right)
+///   Row 2 (bottom): sun icon (left) + animated pill progress bar (right)
 private final class OverlayContentView: NSView {
 
     // swiftlint:disable:next implicitly_unwrapped_optional
     private var pillView: PillProgressView!
+    private let nameLabel = NSTextField(labelWithString: "")
+    private let pctLabel  = NSTextField(labelWithString: "")
 
     var brightnessFraction: CGFloat = 0 {
         didSet { pillView.progress = brightnessFraction }
+    }
+
+    var displayName: String = "" {
+        didSet { nameLabel.stringValue = displayName }
+    }
+
+    var brightnessPercent: Int = 0 {
+        didSet { pctLabel.stringValue = "\(brightnessPercent)%" }
     }
 
     override var isFlipped: Bool { true }
@@ -135,8 +150,40 @@ private final class OverlayContentView: NSView {
     private func setupSubviews() {
         wantsLayer = true
 
-        // Sun icon — left-centre
-        let iconY = (kOverlayHeight - kIconSize) / 2
+        // --- Row 1: display name (left) + percentage (right) ---
+        let textY = kTextTopPad
+
+        let labelFont = NSFont.systemFont(ofSize: kTextFontSize, weight: .medium)
+
+        // Display name label — left-aligned, truncates in the middle
+        nameLabel.font          = labelFont
+        nameLabel.textColor     = NSColor(white: 1, alpha: 0.75)
+        nameLabel.alignment     = .left
+        nameLabel.lineBreakMode = .byTruncatingMiddle
+        nameLabel.frame = CGRect(
+            x: kHorizPadding,
+            y: textY,
+            width: kOverlayWidth - kHorizPadding * 2 - 36,   // leave room for percentage
+            height: kTextRowHeight)
+        addSubview(nameLabel)
+
+        // Percentage label — right-aligned
+        pctLabel.font      = labelFont
+        pctLabel.textColor = NSColor(white: 1, alpha: 0.75)
+        pctLabel.alignment = .right
+        pctLabel.frame = CGRect(
+            x: kOverlayWidth - kHorizPadding - 36,
+            y: textY,
+            width: 36,
+            height: kTextRowHeight)
+        addSubview(pctLabel)
+
+        // --- Row 2: sun icon (left) + pill bar (right) ---
+        let row2Y = kTextTopPad + kTextRowHeight + 6   // 6 pt gap between rows
+
+        // Sun icon — vertically centred in the bar row height
+        let barRowHeight = kOverlayHeight - row2Y       // remaining height
+        let iconY = row2Y + (barRowHeight - kIconSize) / 2
         let iconView = NSImageView(frame: CGRect(x: kHorizPadding, y: iconY, width: kIconSize, height: kIconSize))
         let cfg = NSImage.SymbolConfiguration(pointSize: kIconSize * 0.80, weight: .semibold)
         iconView.image = NSImage(systemSymbolName: "sun.max.fill", accessibilityDescription: nil)?
@@ -145,10 +192,10 @@ private final class OverlayContentView: NSView {
         iconView.imageScaling     = .scaleProportionallyUpOrDown
         addSubview(iconView)
 
-        // Pill bar — fills remaining width
+        // Pill bar — fills remaining width in row 2
         let barX = kHorizPadding + kIconSize + kHorizPadding * 0.65
         let barW = kOverlayWidth - barX - kHorizPadding
-        let barY = (kOverlayHeight - kBarHeight) / 2
+        let barY = row2Y + (barRowHeight - kBarHeight) / 2
         pillView = PillProgressView(frame: CGRect(x: barX, y: barY, width: barW, height: kBarHeight))
         addSubview(pillView)
     }
@@ -192,8 +239,13 @@ final class BrightnessOverlay {
         // the cursor moving from one screen to another between presses.
         panel.setFrame(overlayRect(for: displayID), display: false)
 
-        // Update the bar — animates smoothly via CABasicAnimation
-        contentViews[displayID]?.brightnessFraction = fraction
+        // Update text row
+        if let content = contentViews[displayID] {
+            content.displayName = screenName(for: displayID)
+            content.brightnessPercent = brightnessPercent
+            // Update the bar — animates smoothly via CABasicAnimation
+            content.brightnessFraction = fraction
+        }
 
         // Reschedule dismiss timer (extends display time while keys are held)
         dismissTimers[displayID]?.invalidate()
@@ -256,6 +308,14 @@ final class BrightnessOverlay {
         panels[displayID]       = panel
         contentViews[displayID] = content
         return panel
+    }
+
+    /// Returns the localized display name for the given display ID,
+    /// falling back to "Display" if the screen cannot be matched.
+    private func screenName(for displayID: CGDirectDisplayID) -> String {
+        NSScreen.screens.first {
+            ($0.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? CGDirectDisplayID) == displayID
+        }?.localizedName ?? "Display"
     }
 
     /// Top-right corner of the display, just below the menu bar.
