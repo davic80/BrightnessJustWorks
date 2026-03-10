@@ -6,6 +6,20 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [1.1.1] — 2026-03-10
+
+### Added
+
+- OSD overlay now shows a top text row with the display name (`NSScreen.localizedName`) left-aligned and brightness percentage right-aligned, above the sun icon and pill progress bar
+- OSD overlay height increased from 56 pt to 76 pt to accommodate the new text row
+
+### Fixed
+
+- Release zip switched from `zip -r --symlinks` to `ditto -ck --sequesterRsrc --keepParent` to correctly preserve macOS extended attributes
+- Release pipeline now runs `codesign --deep --force --sign -` after build to produce a proper ad-hoc signature with `_CodeSignature/CodeResources` — prevents macOS Gatekeeper from reporting the downloaded app as "damaged"
+
+---
+
 ## [1.1.0] — 2026-03-10
 
 ### Added
@@ -49,5 +63,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ---
 
 <!-- unreleased changes go above this line -->
+[1.1.1]: https://github.com/davic80/BrightnessJustWorks/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/davic80/BrightnessJustWorks/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/davic80/BrightnessJustWorks/releases/tag/v1.0.0
