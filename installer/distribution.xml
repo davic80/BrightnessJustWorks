@@ -8,23 +8,12 @@
     <welcome    file="welcome.html" mime-type="text/html"/>
     <license    file="license.html" mime-type="text/html"/>
 
-    <!-- Apple Silicon only — prevents Rosetta translation of the installer -->
+    <!-- Require macOS 12+ -->
     <volume-check>
         <allowed-os-versions>
             <os-version min="12.0"/>
         </allowed-os-versions>
     </volume-check>
-    <installation-check script="checkArch()"/>
-    <script><![CDATA[
-    function checkArch() {
-        var arch = system.sysctl('hw.machine');
-        if (arch && arch.indexOf('arm64') !== -1) { return true; }
-        my.result.type = 'Fatal';
-        my.result.message = 'BrightnessJustWorks requires an Apple Silicon Mac (M1 or later).';
-        my.result.title = 'Incompatible Hardware';
-        return false;
-    }
-    ]]></script>
 
     <!-- Allowed install locations: system /Applications only -->
     <options customize="never" require-scripts="true" rootVolumeOnly="true"/>
