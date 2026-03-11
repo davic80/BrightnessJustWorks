@@ -15,7 +15,7 @@
         </allowed-os-versions>
     </volume-check>
     <installation-check script="checkArch()"/>
-    <script>
+    <script><![CDATA[
     function checkArch() {
         var arch = system.sysctl('hw.machine');
         if (arch && arch.indexOf('arm64') !== -1) { return true; }
@@ -24,7 +24,7 @@
         my.result.title = 'Incompatible Hardware';
         return false;
     }
-    </script>
+    ]]></script>
 
     <!-- Allowed install locations: system /Applications only -->
     <options customize="never" require-scripts="true" rootVolumeOnly="true"/>
