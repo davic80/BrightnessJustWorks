@@ -1,18 +1,24 @@
 #!/bin/bash
 # postinstall — runs as root after the .app is placed in /Applications
-set -euo pipefail
+# $1 = package path, $2 = target location, $3 = target volume (e.g. "/")
+# Do NOT use set -e: this script must never abort the install on non-fatal errors.
 
-APP="/Applications/BrightnessJustWorks.app"
+APP="${3}/Applications/BrightnessJustWorks.app"
+
+if [ ! -d "$APP" ]; then
+    echo "postinstall: WARNING: $APP not found, skipping launch steps"
+    exit 0
+fi
 
 # Remove quarantine so Gatekeeper doesn't block the app on first open
 xattr -dr com.apple.quarantine "$APP" 2>/dev/null || true
 
 # Determine the logged-in console user (works even when installer runs as root)
-CONSOLE_USER=$(stat -f "%Su" /dev/console)
+CONSOLE_USER=$(stat -f "%Su" /dev/console 2>/dev/null || true)
 
 if [ -n "$CONSOLE_USER" ] && [ "$CONSOLE_USER" != "root" ]; then
     # Launch the app as the real user so the Accessibility prompt fires immediately
-    sudo -u "$CONSOLE_USER" open "$APP"
+    sudo -u "$CONSOLE_USER" open "$APP" &
 fi
 
 exit 0
